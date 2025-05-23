@@ -6,11 +6,17 @@ Program Details: <Program Description Here>
 
 mod modules;
 
+use macroquad::miniquad::window;
 use macroquad::prelude::*;
 use crate::modules::still_image::StillImage;
 use crate::modules::text_button::TextButton;
 use crate::modules::grid::draw_grid;
 use crate::modules::image_button::ImageButton;
+use crate::modules::scale::use_virtual_resolution;
+use crate::modules::animated_image::AnimatedImage;
+use crate::modules::preload_image::TextureManager;
+use crate::modules::preload_image::LoadingScreenOptions; // If you want to customize the loading screen
+
 
 /// Set up window settings before the app runs
 fn window_conf() -> Conf {
@@ -28,27 +34,26 @@ fn window_conf() -> Conf {
 
 #[macroquad::main(window_conf)]
 async fn main() {
-    //let mut loca_list = vec![[550.0, 500.0], [850.0, 500.0]];
-    //let mut rng_loca: ThreadRng = thread_rng();
-    let mut i = 0.0;
-    let mut image_x = "assets/x.png";
-    //let mut rand_loca = 0;
-   // while i < 2.0 {
-    //    rand_loca = rng_loca.gen_range(0..2);
-   //     i += 1.0;
-   // }
+    let mut loca_box = vec![[980.0, 950.0], [1460.0, 950.0], [1940.0, 950.0]];
+
+    let mut image_x = "assets/grey.png";
+
+    let tm = TextureManager::new();
+    tm.preload_all(&["assets/char_1.png", "assets/char_2.png"]).await;
+   
+
     let board = StillImage::new(
         "assets/board_2.png",
-        2050.0,  // width
-        1080.0,  // height
+        3000.0,  // width
+        1500.0,  // height
         0.0,  // x position
         0.0,   // y position
         true,   // Enable stretching
         1.0,    // Normal zoom (100%)
     ).await;
     let mut btn_start = TextButton::new(
-        950.0,
-        500.0,
+        3000.0 / 2.0,
+        1500.0 / 2.0,
         200.0,
         60.0,
         "Start Game",
@@ -56,53 +61,86 @@ async fn main() {
         GREEN,
         30
     );
-    let char_1 = StillImage::new(
-        "assets/char_1.png",
-        300.0,  // width
-        500.0,  // height
-        10.0,        //loca_list[rand_loca][0],  // x position
-        10.0,    //loca_list[rand_loca][1],   // y position
-        true,   // Enable stretching
-        1.0,    // Normal zoom (100%)
-    ).await;
-
-    let mut x = StillImage::new(
-        image_x,
-        300.0,  // width
-        500.0,  // height
-        50.0,        //loca_list[rand_loca][0],  // x position
-        50.0,    //loca_list[rand_loca][1],   // y position
-        true,   // Enable stretching
-        1.0,    // Normal zoom (100%)
-    ).await;
 
     let btn_image = ImageButton::new(
         200.0,
-        740.0,
+        1100.0,
         300.0,
         500.0,
         "assets/char_1.png",
         "assets/char_1_hover.png",
     ).await;
 
-    let char_2 = StillImage::new(
+    let btn_image_2 = ImageButton::new(
+        400.0,
+        1100.0,
+        300.0,
+        500.0,
         "assets/char_2.png",
-        300.0,  // width
-        500.0,  // height
-        10.0, //loca_list[rand_loca][0],  // x position
-        10.0, //loca_list[rand_loca][1],   // y position
-        true,   // Enable stretching
-        1.0,    // Normal zoom (100%)
+        "assets/char_2_hover.png",
     ).await;
+
+    let mut btn_place_a = ImageButton::new(
+        870.0,
+        900.0,
+        329.0,
+        243.0,
+        image_x,
+        image_x,
+    ).await;
+
+    let mut btn_place_b = ImageButton::new(
+        1350.0,
+        900.0,
+        329.0,
+        243.0,
+        image_x,
+        image_x,
+    ).await;
+
+    let mut btn_place_c = ImageButton::new(
+        1830.0,
+        900.0,
+        329.0,
+        243.0,
+        image_x,
+        image_x,
+    ).await;
+
+    let mut x = AnimatedImage::from_gif(
+        "assets/x.gif", 
+        loca_box[0][0],
+        loca_box[0][1],          
+        128.0, 128.0,          
+        true        
+    ).await;
+
+    let mut x2 = AnimatedImage::from_gif(
+        "assets/x.gif", 
+        loca_box[1][0],
+        loca_box[1][1],          
+        128.0, 128.0,          
+        true                   
+    ).await;
+
+    let mut x3 = AnimatedImage::from_gif(
+        "assets/x.gif", 
+        loca_box[2][0],
+        loca_box[2][1],          
+        128.0, 128.0,          
+        true                   
+    ).await;
+
     let mut start_game = false;
     let mut char_click = false;
-    //let mut char_list = vec![char_1, char_2];
-    //let mut rng: ThreadRng = thread_rng();
-    //let mut rand = rng.gen_range(0..2);
+    let mut char_type = "";
+    let mut char_place = 0;
+
     
 
 
     loop {
+         use_virtual_resolution(3000.0, 1500.0);
         clear_background(LIGHTGRAY);
         
         board.draw();
@@ -116,27 +154,80 @@ async fn main() {
         if start_game {
             if btn_image.click() {
                 char_click = true;
+                char_type = "char_1";
+            }
+            if btn_image_2.click() {
+                char_click = true;
+                char_type = "char_2";
             }
 
-            if char_click {
-            x.draw();
-            i += 1.0;
-            if i >= 10.0 {
-                i = 0.0;
-                image_x = "assets/x_glow.png";
-                x.draw();
-            }
-            else if i < 10.0 {
-                image_x = "assets/x.png";
-                x.draw();
-            }
-            }
-            //char_list[rand].draw();
-            //char_list[rand].draw();
-        } 
-        
-        
+            if char_click{
+                
+                if btn_place_a.click() {
+                char_place = 1;
+                }
+                else if btn_place_b.click() {
+                    char_place = 2;
+                }
+                else if btn_place_c.click() {
+                    char_place = 3;
+                }
 
-        next_frame().await;
+                if char_place == 1 {
+                    let image_x_string = format!("assets/{}.png", char_type);
+                    image_x = Box::leak(image_x_string.into_boxed_str());
+                    btn_place_a = ImageButton::new(
+                        870.0,
+                        900.0,
+                        329.0,
+                        243.0,
+                        image_x,
+                        image_x,
+                    ).await;
+                    x.visible = false;
+                    char_place = 0;
+                }
+                else if char_place == 2 {
+                    let image_x_string = format!("assets/{}.png", char_type);
+                    image_x = Box::leak(image_x_string.into_boxed_str());
+                    btn_place_b = ImageButton::new(
+                        1350.0,
+                        900.0,
+                        329.0,
+                        243.0,
+                        image_x,
+                        image_x,
+                    ).await;
+                    x2.visible = false;
+                    char_place = 0;
+                }
+                else if char_place == 3 {
+                    let image_x_string = format!("assets/{}.png", char_type);
+                    image_x = Box::leak(image_x_string.into_boxed_str());
+                    btn_place_c = ImageButton::new(
+                        1830.0,
+                        900.0,
+                        329.0,
+                        243.0,
+                        image_x,
+                        image_x,
+                    ).await;
+                    x3.visible = false;
+                    char_place = 0;
+                }
+                
+                    x.draw();
+                    x2.draw();
+                    x3.draw();
+                
+            }
+
+            
+
+        
+        
     }
+        next_frame().await;
+    
+}
 }

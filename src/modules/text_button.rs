@@ -62,6 +62,8 @@ Note: For buttons with transparent backgrounds (set normal_color with alpha=0),
 only the text area is clickable, not the entire button area.
 */
 use macroquad::prelude::*;
+#[cfg(feature = "scale")]
+use crate::modules::scale::mouse_position_world as mouse_position;
 
 // Custom struct for ButtonText
 pub struct TextButton {
@@ -82,11 +84,12 @@ pub struct TextButton {
     pub border: bool,       // Whether to draw a border
     pub border_color: Color, // Color of the border
     pub border_thickness: f32, // Thickness of the border
-    pub visible: bool,
+    
     // Cached values for performance
     cached_text_width: f32,
     cached_text_position: Vec2,
     cached_rect: Rect,
+    pub visible: bool,
 }
 
 impl TextButton {
@@ -180,31 +183,31 @@ impl TextButton {
     }
     
     // Getter for x position
-    #[allow(dead_code)]
+    #[allow(unused)]
     pub fn get_x(&self) -> f32 {
         self.x
     }
     
     // Getter for y position
-    #[allow(dead_code)]
+    #[allow(unused)]
     pub fn get_y(&self) -> f32 {
         self.y
     }
     
     // Getter for position as Vec2
-    #[allow(dead_code)]
+    #[allow(unused)]
     pub fn get_position(&self) -> Vec2 {
         Vec2::new(self.x, self.y)
     }
     
     // Getter for the button text
-    #[allow(dead_code)]
+    #[allow(unused)]
     pub fn get_text(&self) -> &str {
         &self.text
     }
     
     // Setter for the button text - updates cached measurements
-    #[allow(dead_code)]
+    #[allow(unused)]
     pub fn set_text<T: Into<String>>(&mut self, text: T) -> &mut Self {
         self.text = text.into();
         
@@ -224,7 +227,7 @@ impl TextButton {
     }
     
     // Update method to recalculate values when position or size changes
-    #[allow(dead_code)]
+    #[allow(unused)]
     pub fn update_position(&mut self, x: f32, y: f32, width: Option<f32>, height: Option<f32>) -> &mut Self {
         self.x = x;
         self.y = y;
@@ -250,7 +253,7 @@ impl TextButton {
     }
 
     pub fn click(&self) -> bool {
-        if self.visible == false {
+        if !self.visible {
             return false; // If not visible, don't process clicks
         }
         // Get mouse position

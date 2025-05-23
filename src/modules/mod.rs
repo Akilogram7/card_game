@@ -17,3 +17,6 @@ pub mod still_image;
 pub mod text_button;
 pub mod grid;
 pub mod image_button;
+pub mod scale;
+pub mod animated_image;
+pub mod preload_image;

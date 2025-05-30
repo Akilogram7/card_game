@@ -20,3 +20,4 @@ pub mod image_button;
 pub mod scale;
 pub mod animated_image;
 pub mod preload_image;
+pub mod label;

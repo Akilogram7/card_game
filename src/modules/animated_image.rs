@@ -127,7 +127,7 @@ pub struct AnimatedImage {
     loop_animation: bool,
     last_update: f32, // Store the last update time
     angle: f32, // Rotation angle
-    pub visible: bool,
+  pub  visible: bool, // Visibility flag
 }
 
 impl AnimatedImage {
@@ -170,7 +170,7 @@ impl AnimatedImage {
             loop_animation,
             last_update: get_time() as f32,
             angle: 0.0,
-            visible:true,
+            visible: true, // Default to visible
         }
     }
     
@@ -276,7 +276,7 @@ impl AnimatedImage {
             loop_animation,
             last_update: get_time()as f32,
             angle: 0.0,
-            visible:true,
+            visible: true, // Default to visible
         }
     }
     
@@ -408,7 +408,7 @@ impl AnimatedImage {
                         loop_animation,
                         last_update: get_time() as f32,
                         angle: 0.0,
-                        visible:true,
+                        visible: true, // Default to visible
                     };
                 } else {
                     // Fall back to loading as a regular texture if GIF processing fails
@@ -564,7 +564,7 @@ impl AnimatedImage {
             loop_animation: false,
             last_update: 0.0,
             angle: 0.0,
-            visible:true,
+            visible: true, // Default to visible    
         }
     }
     
@@ -587,7 +587,7 @@ impl AnimatedImage {
             return;
         }
         if !self.visible {
-            return; // Don't draw if not visible
+            return; // Skip drawing if not visible
         }
         // Auto-update animation based on elapsed time
         if self.state == AnimationState::Playing && self.total_frames > 1 {

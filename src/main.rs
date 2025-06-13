@@ -1,7 +1,8 @@
 /*
-By: <Your Name Here>
+By: Akeell Parameswaran
 Date: 2025-05-09
-Program Details: <Program Description Here>
+      2025-06-13
+Program Details: Start of a card game
 */
 
 mod modules;

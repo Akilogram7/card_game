@@ -20,6 +20,10 @@ use crate::modules::text_button::TextButton;
 use macroquad::miniquad::window;
 use macroquad::prelude::*;
 use macroquad::rand::ChooseRandom;
+use macroquad::rand::srand;
+use std::time::{SystemTime, UNIX_EPOCH};
+
+
 
 /// Set up window settings before the app runs
 fn window_conf() -> Conf {
@@ -79,7 +83,17 @@ async fn main() {
     // persistent enemy buttons
     let mut enemy_buttons: Vec<ImageButton> = vec![];
 
+    
+
     loop {
+    // Set the seed for random number generation based on the current time
+    // This ensures that the random numbers generated are different each time the program runs
+    // This is useful for generating unique game states or random events
+        let start = SystemTime::now();
+        let since_epoch = start.duration_since(UNIX_EPOCH).unwrap();
+        let nanos = since_epoch.as_nanos() as u64;
+        srand(nanos);
+    
         use_virtual_resolution(3000.0, 1500.0);
         clear_background(LIGHTGRAY);
 
@@ -203,19 +217,20 @@ async fn main() {
                     char_place = 0;
                     ready_game = true;
                 }
-
+//computer code
                 if ready_game && enemy_chars.is_none() {
                     let mut chosen = vec![];
                     while chosen.len() < 3 {
                         let rand_char = char_list.choose().unwrap();
+                        println!("rand_char: {}", rand_char);
                         chosen.push(*rand_char);
                     }
                     enemy_chars = Some(chosen);
                 }
-                //CODE FROM CHATGPT: MUST LEARN AND UNDERSTAND THIS
+               
                 if ready_game && !enemy_displayed {
                     if let Some(chars) = &enemy_chars {
-                        let enemy_char_spot = vec![[940.0, 250.0], [1420.0, 250.0], [1900.0, 250.0]];
+                        let enemy_char_spot = vec![[900.0, 275.0], [1380.0, 275.0], [1860.0, 275.0]];
 
                         for (i, ch) in chars.iter().enumerate() {
                             let img_path = format!("assets/{}.png", ch);
